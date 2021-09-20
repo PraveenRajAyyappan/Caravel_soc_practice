@@ -1,0 +1,91 @@
+How to generate gds files for hardening the user project macro on to the caravel harness!
+
+
+
+------------------------Installing caravel user project----------------------------------
+ 
+git clone https://github.com/efabless/caravel_user_project.git
+cd caravel_user_project
+make install
+
+--------------------------Exporting paths for caravel------------------------------------- 
+
+gedit ~/.bashrc
+(Write these lines at last of the .bashrc file)
+
+# caravel paths
+export PDK_ROOT="/home/praveen/OpenLane/pdks"
+export OPENLANE_ROOT="/home/praveen/OpenLane" <enter the path where openlane reside in your system, this is an example>
+export CARAVEL_ROOT="/project/caravel"
+
+-save and exit the .bashrc file
+(continuing in the terminal)
+
+source ~/.bashrc
+
+----------------------makefile changes for user_proj_example to work------------------------------
+
+cd caravel_user_project/openlane/
+make user_proj_example
+
+Here are the changes you need to make if you get errors like this if not skip this,
+
+-If you get an warning that "Environment does not support yaml manifest comparsion"
+Then you need to note the version of the OpenLane which will be available in the first line, when you run "make user_proj_example"
+for example i have this version in my system: 2021.09.09_03.00.48
+--Open the makefile located in "caravel_user_project/openlane/" and change the OPENLANE_TAG ?= 2021.09.09_03.00.48 
+
+
+-If the flow ends with an makefile error such as no variable,etc. 
+--Open the makefile in "caravel_user_project/openlane/" and try adding,
+       -e CARAVEL_ROOT=$(CARAVEL_ROOT) \
+after
+       -e PDK_ROOT=$(PDK_ROOT) \
+
+
+-Now do "make user_proj_example" in path "caravel_user_project/openlane/", if the flow ends with an makefile error such as no variable again then,
+--Try this command "rm -rf user_proj_example/runs/*" and do "make user_proj_example" again, by now atleast the flow shoud run with errors or no errors but it should not exit the terminal showing a make or variable error. 
+xxxxxx IF THE SAME ERROR HAPPENS AGAIN I DONT HAVE SOLUTION AND MAYBE I CAN TRY TO SOLVE IT IF YOU ASK XXXXXXXXXXXXX 
+
+
+
+- Finally if you get an error like "AttributeError: module 'opendb' has no attribute 'new_int',
+--search for io_place.py in your system and edit your lines which should look the exact same as below,
+
+(After line 285, i.e)
+ print("Block boundaries:", BLOCK_LL_X, BLOCK_LL_Y, BLOCK_UR_X, BLOCK_UR_Y)
+
+origin, count, step = block_top.findTrackGrid(H_LAYER).getGridPatternY(0)
+
+h_tracks = getGrid(origin, count, step)
+
+origin, count, step = block_top.findTrackGrid(V_LAYER).getGridPatternX(0)
+
+v_tracks = getGrid(origin, count, step)
+
+(Before)
+for rev in reverse_arr:
+
+(for more clearance check this link https://gist.github.com/20Mhz/be34125a6747a559b4da7f073043ee9f)
+
+
+
+---------------config.tcl file changes for user_proj_example to work-------------------------
+
+-Now do "make user_project_wrapper", if you get an error like "can't read script_dir:no such variable"
+--Then open config.tcl file in "caravel_user_project/openlane/user_project_wrapper", 
+
+And put your script_dir definition before the call to env(CARAVEL_ROOT)/openlane/user_project_wrapper_empty/fixed_wrapper_cfgs.tcl
+
+Finally, Comment out source $::env(CARAVEL_ROOT)/openlane/user_project_wrapper_empty/default_wrapper_cfgs.tcl 
+since it doesn't exist.
+
+
+-----------------------Final steps to genrate gds------------------------------------
+
+
+cd caravel_user_project/openlane/
+make user_proj_example
+make user_project_wrapper
+
+
