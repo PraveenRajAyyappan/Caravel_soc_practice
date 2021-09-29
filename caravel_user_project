@@ -4,7 +4,7 @@ How to generate gds files for hardening the user project macro on to the caravel
 
 ------------------------Installing caravel user project----------------------------------
  
-git clone https://github.com/efabless/caravel_user_project.git
+git clone https://github.com/efabless/caravel_user_project.git -b mpw-3
 cd caravel_user_project
 make install
 
