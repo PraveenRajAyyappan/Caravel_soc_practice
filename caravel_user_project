@@ -17,6 +17,7 @@ gedit ~/.bashrc
 export PDK_ROOT="/home/praveen/OpenLane/pdks"
 export OPENLANE_ROOT="/home/praveen/OpenLane" <enter the path where openlane reside in your system, this is an example>
 export CARAVEL_ROOT="/project/caravel"
+(if you are using mpw-3 branch of caravel_user_project then change ur CARAVEL_ROOT to "/home/praveen/caravel_user_project/caravel")
 
 -save and exit the .bashrc file
 (continuing in the terminal)
